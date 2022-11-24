@@ -1,6 +1,7 @@
 package com.jcinstagram.login
 
 import android.app.Activity
+import android.util.Log
 import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,13 +32,13 @@ import com.jcinstagram.R
 import com.jcinstagram.ui.theme.JetpackComposeInstagramTheme
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(viewModel: LoginViewModel) {
     Box(
         Modifier
             .fillMaxSize()
             .padding(8.dp)) {
         Header(Modifier.align(Alignment.TopEnd))
-        Body(Modifier.align(Alignment.Center))
+        Body(Modifier.align(Alignment.Center), viewModel)
         Footer(Modifier.align(Alignment.BottomCenter))
     }
 }
@@ -51,22 +53,20 @@ fun Header(modifier: Modifier) {
 }
 
 @Composable
-fun Body(modifier: Modifier) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var isLoginEnable by rememberSaveable { mutableStateOf(false) }
+fun Body(modifier: Modifier, viewModel: LoginViewModel) {
+    val email: String by viewModel.email.observeAsState(initial = "")
+    val password: String by viewModel.password.observeAsState(initial = "")
+    val isLoginEnable: Boolean by viewModel.isLoginEnable.observeAsState(initial = false)
 
     Column(modifier = modifier) {
         ImageLogo(Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.size(16.dp))
         EmailField(email) {
-            email = it
-            isLoginEnable = enableLogin(email, password)
+            viewModel.onLoginChanged(emailIn = it, passwordIn = password)
         }
         Spacer(modifier = Modifier.size(4.dp))
         PasswordField(password) {
-            password = it
-            isLoginEnable = enableLogin(email, password)
+            viewModel.onLoginChanged(emailIn = email, passwordIn = it)
         }
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
@@ -152,7 +152,7 @@ fun ForgotPassword(modifier: Modifier) {
 @Composable
 fun LoginButton(loginEnable: Boolean) {
     Button(
-        onClick = { },
+        onClick = { Log.i("Login", "Is clicked") },
         enabled = loginEnable,
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
@@ -165,10 +165,6 @@ fun LoginButton(loginEnable: Boolean) {
         Text(text = "Log In")
     }
 }
-
-fun enableLogin(email: String, password: String): Boolean =
-    Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 6
-
 
 @Composable
 fun LoginDivider() {
@@ -254,6 +250,6 @@ fun SignUp() {
 @Composable
 fun DefaultPreview() {
     JetpackComposeInstagramTheme {
-        LoginScreen()
+        //LoginScreen()
     }
 }
