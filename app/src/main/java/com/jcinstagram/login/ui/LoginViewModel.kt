@@ -1,4 +1,4 @@
-package com.jcinstagram.login
+package com.jcinstagram.login.ui
 
 import android.util.Patterns
 import androidx.lifecycle.LiveData
@@ -22,6 +22,6 @@ class LoginViewModel: ViewModel() {
         _isLoginEnable.value = enableLogin(emailIn, passwordIn)
     }
 
-    fun enableLogin(email: String, password: String): Boolean =
+    private fun enableLogin(email: String, password: String): Boolean =
         Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 6
 }

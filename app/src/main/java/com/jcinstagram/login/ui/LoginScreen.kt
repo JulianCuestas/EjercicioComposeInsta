@@ -1,8 +1,7 @@
-package com.jcinstagram.login
+package com.jcinstagram.login.ui
 
 import android.app.Activity
 import android.util.Log
-import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
